@@ -1,29 +1,22 @@
-export class Component {
-  private children: Component[] = [];
+export class Component<T extends HTMLElement = HTMLElement> {
+  private children: Component<HTMLElement>[] = [];
   private className_ = "";
-  private element: HTMLElement;
+  private element: T;
   private mountCallback?: () => void;
   private unmountCallback?: () => void;
 
   public constructor(t: keyof HTMLElementTagNameMap) {
-    this.element = document.createElement(t);
+    this.element = document.createElement(t) as T;
   }
 
-  public static create(t: keyof HTMLElementTagNameMap) {
-    return new Component(t);
+  public static create<T extends HTMLElement = HTMLElement>(
+    t: keyof HTMLElementTagNameMap
+  ) {
+    return new Component<T>(t);
   }
 
   public mount() {
     this.mountCallback?.();
-    // while (this.element.childElementCount > 0) {
-    //   this.element.removeChild(this.element.childNodes[0]);
-    // }
-    // for (let i = 0; i < this.children.length; ++i) {
-    //   const child = this.children[i];
-    //   child.mount();
-    //   console.log("mounting", child.element);
-    //   this.element.append(child.element);
-    // }
   }
 
   public ref() {
@@ -42,6 +35,13 @@ export class Component {
 
   public onClick(handler: (event: MouseEvent) => void) {
     this.element.onclick = handler;
+    return this;
+  }
+
+  // this is the only css property that should be modifiable per component
+  // if you need to modify another, use scss
+  public setColor(color: string) {
+    this.element.style.color = color;
     return this;
   }
 
@@ -103,6 +103,16 @@ export class Component {
 
   public onUnmount(cb: () => void) {
     this.unmountCallback = cb;
+    return this;
+  }
+
+  public onKeydown(cb: (event: KeyboardEvent) => void) {
+    this.element.onkeydown = cb;
+    return this;
+  }
+
+  public placeholder(text: string) {
+    this.element.setAttribute("placeholder", text);
     return this;
   }
 }

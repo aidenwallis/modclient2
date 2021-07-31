@@ -1,0 +1,20 @@
+.container {
+  padding: var(--spacing-30);
+}
+
+.field {
+  border: 1px solid var(--color-background-alt);
+  border-radius: var(--border-radius);
+  box-shadow: 0;
+  -webkit-appearance: none;
+  width: 100%;
+  resize: none;
+  background: transparent;
+  font-family: sans-serif;
+  padding: var(--spacing-10);
+  outline: none;
+  color: var(--chat-line-color);
+  &:focus {
+    border-color: var(--color-primary);
+  }
+}

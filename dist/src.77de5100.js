@@ -190,13 +190,363 @@ var reloadCSS = require('_css_loader');
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
 module.exports = {};
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"core/emitter.ts":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"utils/request-error.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Emitter = void 0;
+exports.RequestError = void 0;
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var RequestError = /*#__PURE__*/function (_Error) {
+  _inherits(RequestError, _Error);
+
+  var _super = _createSuper(RequestError);
+
+  function RequestError(message, status) {
+    var _this;
+
+    _classCallCheck(this, RequestError);
+
+    _this = _super.call(this, message);
+    _this.statusCode = status;
+    return _this;
+  }
+
+  return RequestError;
+}( /*#__PURE__*/_wrapNativeSuper(Error));
+
+exports.RequestError = RequestError;
+},{}],"utils/api-client.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ApiClient = exports.ApiClientMethod = void 0;
+
+var _requestError = require("./request-error");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ApiClientMethod;
+exports.ApiClientMethod = ApiClientMethod;
+
+(function (ApiClientMethod) {
+  ApiClientMethod["GET"] = "GET";
+  ApiClientMethod["POST"] = "POST";
+  ApiClientMethod["PATCH"] = "PATCH";
+  ApiClientMethod["DELETE"] = "DELETE";
+  ApiClientMethod["PUT"] = "PUT";
+})(ApiClientMethod || (exports.ApiClientMethod = ApiClientMethod = {}));
+
+var UNKNOWN_ERR = "An unknown error occurred.";
+var UNKNOWN_ERR_STATUS = 500;
+
+var ApiClient = /*#__PURE__*/function () {
+  function ApiClient() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, ApiClient);
+
+    this.baseUrl = options.baseUrl || "";
+    this.headers = options.headers || {};
+  }
+
+  _createClass(ApiClient, [{
+    key: "request",
+    value: function request(config) {
+      var _baseURL$headers$conf = _objectSpread(_objectSpread({}, {
+        baseURL: this.baseUrl,
+        headers: this.headers
+      }), config),
+          baseURL = _baseURL$headers$conf.baseURL,
+          query = _baseURL$headers$conf.query,
+          url = _baseURL$headers$conf.url,
+          method = _baseURL$headers$conf.method,
+          body = _baseURL$headers$conf.body,
+          headers = _baseURL$headers$conf.headers;
+
+      return fetch(this.parseUrl(baseURL + url, query), {
+        method: method,
+        body: body,
+        headers: _objectSpread({
+          Accept: "application/json"
+        }, headers)
+      }).then(function (response) {
+        return response.json().then(function (json) {
+          return {
+            data: json,
+            status: response.status,
+            statusText: response.statusText,
+            headers: response.headers
+          };
+        });
+      });
+    }
+  }, {
+    key: "get",
+    value: function get(url) {
+      var qs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return fetch(this.baseUrl + this.parseUrl(url, qs), {
+        headers: this.parseHeaders(headers)
+      }).then(this.handleResponse).catch(this.handleError);
+    }
+  }, {
+    key: "delete",
+    value: function _delete(url) {
+      var qs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return fetch(this.parseUrl(url, qs), {
+        headers: this.parseHeaders(headers),
+        method: "DELETE"
+      }).then(this.handleResponse).catch(this.handleError);
+    }
+  }, {
+    key: "post",
+    value: function post(url, body) {
+      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      return fetch(this.baseUrl + this.parseUrl(url, qs), {
+        headers: this.parseHeaders(headersObj),
+        body: body ? JSON.stringify(body) : null,
+        method: "POST"
+      }).then(this.handleResponse).catch(this.handleError);
+    }
+  }, {
+    key: "put",
+    value: function put(url, body) {
+      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      return fetch(this.baseUrl + this.parseUrl(url, qs), {
+        headers: this.parseHeaders(headersObj),
+        body: body ? JSON.stringify(body) : null,
+        method: "PUT"
+      }).then(this.handleResponse).catch(this.handleError);
+    }
+  }, {
+    key: "patch",
+    value: function patch(url, body) {
+      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      return fetch(this.baseUrl + this.parseUrl(url, qs), {
+        headers: this.parseHeaders(headersObj),
+        body: body ? JSON.stringify(body) : null,
+        method: "PATCH"
+      }).then(this.handleResponse).catch(this.handleError);
+    }
+  }, {
+    key: "handleResponse",
+    value: function handleResponse(response) {
+      return response.json().then(function (json) {
+        return {
+          body: json,
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        };
+      });
+    }
+  }, {
+    key: "handleError",
+    value: function handleError(err) {
+      return Promise.reject(new _requestError.RequestError(err.message ? err.message.toString() : UNKNOWN_ERR, err.statusCode || UNKNOWN_ERR_STATUS));
+    }
+  }, {
+    key: "parseUrl",
+    value: function parseUrl(endpoint, qs) {
+      var url = endpoint;
+
+      if (qs) {
+        var final = Object.keys(qs).map(function (q) {
+          var encodedKey = encodeURIComponent(q);
+          var value = qs[q];
+          if (!value) return "";
+
+          if (Array.isArray(value)) {
+            return value.map(function (nestedValue) {
+              return "".concat(encodedKey, "=").concat(encodeURIComponent(nestedValue));
+            }).join("&");
+          }
+
+          return "".concat(encodedKey, "=").concat(encodeURIComponent(value));
+        }).filter(function (i) {
+          return i;
+        }).join("&");
+
+        if (final.length) {
+          url += endpoint.includes("?") ? "&" : "?";
+        }
+
+        url += final;
+      }
+
+      return url;
+    }
+  }, {
+    key: "parseHeaders",
+    value: function parseHeaders(headers) {
+      var h = new Headers();
+
+      for (var _i = 0, _Object$keys = Object.keys(this.headers); _i < _Object$keys.length; _i++) {
+        var header = _Object$keys[_i];
+        h.append(header, this.headers[header]);
+      }
+
+      h.append("Accept", "application/json");
+
+      for (var _i2 = 0, _Object$keys2 = Object.keys(headers); _i2 < _Object$keys2.length; _i2++) {
+        var _header = _Object$keys2[_i2];
+        h.append(_header, headers[_header]);
+      }
+
+      return h;
+    }
+  }]);
+
+  return ApiClient;
+}();
+
+exports.ApiClient = ApiClient;
+},{"./request-error":"utils/request-error.ts"}],"utils/preload-image.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.preloadImage = preloadImage;
+
+function preloadImage(src) {
+  return new Promise(function (resolve, reject) {
+    var img = new Image();
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+},{}],"constants.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TWITCH_AUTHORIZE_URL = exports.TWITCH_SCOPES = exports.TWITCH_REDIRECT_URL = exports.TWITCH_CLIENT_ID = void 0;
+var TWITCH_CLIENT_ID = "292iqn01thyi8k3xru68svjbu4druw";
+exports.TWITCH_CLIENT_ID = TWITCH_CLIENT_ID;
+var TWITCH_REDIRECT_URL = "development" === "development" ? "http://localhost:1234" : "https://modclient.aidenwallis.co.uk";
+exports.TWITCH_REDIRECT_URL = TWITCH_REDIRECT_URL;
+var TWITCH_SCOPES = ["channel:moderate", "chat:edit", "chat:read"].sort();
+exports.TWITCH_SCOPES = TWITCH_SCOPES;
+var TWITCH_AUTHORIZE_URL = "https://id.twitch.tv/oauth2/authorize?" + ("client_id=" + TWITCH_CLIENT_ID + "&redirect_uri=" + encodeURIComponent(TWITCH_REDIRECT_URL) + "&response_type=token" + "&scope=" + encodeURIComponent(TWITCH_SCOPES.join(" ")));
+exports.TWITCH_AUTHORIZE_URL = TWITCH_AUTHORIZE_URL;
+},{}],"utils/twitch-request.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onLogout = onLogout;
+exports.setTwitchApiToken = setTwitchApiToken;
+exports.twitchApiRequest = twitchApiRequest;
+exports.twitchApiClient = void 0;
+
+var _constants = require("~/constants");
+
+var _apiClient = require("./api-client");
+
+var _requestError = require("./request-error");
+
+var logoutCallback = null;
+var twitchApiClient = new _apiClient.ApiClient({
+  headers: {
+    Accept: "application/json",
+    "Client-ID": _constants.TWITCH_CLIENT_ID
+  }
+});
+exports.twitchApiClient = twitchApiClient;
+
+function onLogout(cb) {
+  logoutCallback = cb;
+}
+
+function setTwitchApiToken(token) {
+  if (token) {
+    twitchApiClient.headers["Authorization"] = "Bearer ".concat(token);
+  } else {
+    delete twitchApiClient.headers["Authorization"];
+  }
+}
+
+function twitchApiRequest(options) {
+  options.onLoadStart && options.onLoadStart();
+  return twitchApiClient.request(options).then(function (response) {
+    options.onLoadEnd && options.onLoadEnd();
+
+    if (response.status !== 200) {
+      if (response.status === 401) {
+        var _logoutCallback;
+
+        (_logoutCallback = logoutCallback) === null || _logoutCallback === void 0 ? void 0 : _logoutCallback();
+      } else {
+        throw new Error("Non 200 http status code returned: ".concat(response.status));
+      }
+    } else {
+      return options.onSuccess && options.onSuccess(response.data);
+    }
+  }).catch(function (error) {
+    options.onLoadEnd && options.onLoadEnd();
+    console.log(error);
+    options.onError && options.onError(new _requestError.RequestError(error.toString(), 500));
+  });
+}
+},{"~/constants":"constants.ts","./api-client":"utils/api-client.ts","./request-error":"utils/request-error.ts"}],"controllers/badges.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BadgeController = void 0;
+
+var _apiClient = require("~/utils/api-client");
+
+var _preloadImage = require("~/utils/preload-image");
+
+var _twitchRequest = require("~/utils/twitch-request");
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -216,13 +566,146 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var BadgeControllerImpl = /*#__PURE__*/function () {
+  function BadgeControllerImpl() {
+    _classCallCheck(this, BadgeControllerImpl);
+
+    this.channelBadges = {};
+    this.globalBadges = {};
+  }
+
+  _createClass(BadgeControllerImpl, [{
+    key: "getBadges",
+    value: function getBadges(channelId, badges) {
+      var channelBadges = this.channelBadges[channelId] || {};
+      var resp = [];
+
+      for (var i = 0; i < badges.length; ++i) {
+        var _badges$i = _slicedToArray(badges[i], 2),
+            name = _badges$i[0],
+            version = _badges$i[1];
+
+        var channelBadge = channelBadges[name];
+
+        if (channelBadge && channelBadge.versions[version]) {
+          resp.push(channelBadge.versions[version]);
+          continue;
+        }
+
+        var globalBadge = this.globalBadges[name];
+
+        if (globalBadge && globalBadge.versions[version]) {
+          resp.push(globalBadge.versions[version]);
+          continue;
+        }
+      }
+
+      return resp;
+    }
+  }, {
+    key: "loadGlobal",
+    value: function loadGlobal() {
+      var _this = this;
+
+      (0, _twitchRequest.twitchApiRequest)({
+        method: _apiClient.ApiClientMethod.GET,
+        url: "https://api.twitch.tv/helix/chat/badges/global",
+        onSuccess: function onSuccess(body) {
+          _this.globalBadges = _this.parseBadgeResponse((body === null || body === void 0 ? void 0 : body.data) || []);
+        },
+        onError: function onError(error) {
+          console.error("Failed to load global badges, retrying in 5s.", error);
+          setTimeout(function () {
+            return _this.loadGlobal();
+          }, 5000);
+        }
+      });
+    }
+  }, {
+    key: "loadUser",
+    value: function loadUser(userId) {
+      var _this2 = this;
+
+      (0, _twitchRequest.twitchApiRequest)({
+        method: _apiClient.ApiClientMethod.GET,
+        url: "https://api.twitch.tv/helix/chat/badges?broadcaster_id=".concat(encodeURIComponent(userId)),
+        onSuccess: function onSuccess(body) {
+          _this2.channelBadges[userId] = _this2.parseBadgeResponse((body === null || body === void 0 ? void 0 : body.data) || []);
+        },
+        onError: function onError(error) {
+          console.error("Failed to load badges for [".concat(userId, "], retrying in 5s."), error);
+          setTimeout(function () {
+            return _this2.loadUser(userId);
+          }, 5000);
+        }
+      });
+    }
+  }, {
+    key: "parseBadgeResponse",
+    value: function parseBadgeResponse(badges) {
+      return badges.reduce(function (acc, cur) {
+        acc[cur.set_id] = {
+          id: cur.set_id,
+          versions: cur.versions.reduce(function (a, c) {
+            a[c.id] = c;
+            (0, _preloadImage.preloadImage)(c.image_url_1x);
+            return a;
+          }, {})
+        };
+        return acc;
+      }, {});
+    }
+  }]);
+
+  return BadgeControllerImpl;
+}();
+
+var BadgeController = new BadgeControllerImpl();
+exports.BadgeController = BadgeController;
+},{"~/utils/api-client":"utils/api-client.ts","~/utils/preload-image":"utils/preload-image.ts","~/utils/twitch-request":"utils/twitch-request.ts"}],"utils/raf.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.raf = void 0;
+
 var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || function (d) {
   setTimeout(d, 1);
-}; // Emitter is a class which allows you to build a basic abstraction which can emit an event type
+};
+
+exports.raf = raf;
+},{}],"core/emitter.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Emitter = void 0;
+
+var _raf = require("~/utils/raf");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+// Emitter is a class which allows you to build a basic abstraction which can emit an event type
 // to a group of subscribers about a range of topics, it will not block the event loop, and defers
 // all events.
-
-
 var Emitter = /*#__PURE__*/function () {
   function Emitter() {
     _classCallCheck(this, Emitter);
@@ -283,7 +766,7 @@ var Emitter = /*#__PURE__*/function () {
       var _this3 = this;
 
       this.dequeuing = true;
-      raf(function () {
+      (0, _raf.raf)(function () {
         var evt = _this3.queue.shift();
 
         if (!evt) {
@@ -307,7 +790,7 @@ var Emitter = /*#__PURE__*/function () {
           }
         }
 
-        raf(function () {
+        (0, _raf.raf)(function () {
           return _this3.dequeue();
         });
       });
@@ -318,7 +801,60 @@ var Emitter = /*#__PURE__*/function () {
 }();
 
 exports.Emitter = Emitter;
-},{}],"controllers/connection-manager.ts":[function(require,module,exports) {
+},{"~/utils/raf":"utils/raf.ts"}],"controllers/chat.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GlobalChatController = exports.ChatController = exports.ChatEvents = void 0;
+
+var _emitter = require("~/core/emitter");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ChatEvents;
+exports.ChatEvents = ChatEvents;
+
+(function (ChatEvents) {
+  ChatEvents[ChatEvents["Message"] = 0] = "Message";
+  ChatEvents[ChatEvents["Notice"] = 1] = "Notice";
+})(ChatEvents || (exports.ChatEvents = ChatEvents = {}));
+
+var ChatController = /*#__PURE__*/function (_Emitter) {
+  _inherits(ChatController, _Emitter);
+
+  var _super = _createSuper(ChatController);
+
+  function ChatController() {
+    _classCallCheck(this, ChatController);
+
+    return _super.apply(this, arguments);
+  }
+
+  return ChatController;
+}(_emitter.Emitter);
+
+exports.ChatController = ChatController;
+var GlobalChatController = new ChatController();
+exports.GlobalChatController = GlobalChatController;
+},{"~/core/emitter":"core/emitter.ts"}],"controllers/connection-manager.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -354,6 +890,7 @@ exports.ConnectionManagerEvents = ConnectionManagerEvents;
   ConnectionManagerEvents[ConnectionManagerEvents["Part"] = 1] = "Part";
   ConnectionManagerEvents[ConnectionManagerEvents["Connected"] = 2] = "Connected";
   ConnectionManagerEvents[ConnectionManagerEvents["Disconnected"] = 3] = "Disconnected";
+  ConnectionManagerEvents[ConnectionManagerEvents["Send"] = 4] = "Send";
 })(ConnectionManagerEvents || (exports.ConnectionManagerEvents = ConnectionManagerEvents = {}));
 
 var ConnectionManagerControllerImpl = /*#__PURE__*/function (_Emitter) {
@@ -400,15 +937,7 @@ var Component = /*#__PURE__*/function () {
     value: function mount() {
       var _this$mountCallback;
 
-      (_this$mountCallback = this.mountCallback) === null || _this$mountCallback === void 0 ? void 0 : _this$mountCallback.call(this); // while (this.element.childElementCount > 0) {
-      //   this.element.removeChild(this.element.childNodes[0]);
-      // }
-      // for (let i = 0; i < this.children.length; ++i) {
-      //   const child = this.children[i];
-      //   child.mount();
-      //   console.log("mounting", child.element);
-      //   this.element.append(child.element);
-      // }
+      (_this$mountCallback = this.mountCallback) === null || _this$mountCallback === void 0 ? void 0 : _this$mountCallback.call(this);
     }
   }, {
     key: "ref",
@@ -431,6 +960,14 @@ var Component = /*#__PURE__*/function () {
     key: "onClick",
     value: function onClick(handler) {
       this.element.onclick = handler;
+      return this;
+    } // this is the only css property that should be modifiable per component
+    // if you need to modify another, use scss
+
+  }, {
+    key: "setColor",
+    value: function setColor(color) {
+      this.element.style.color = color;
       return this;
     }
   }, {
@@ -507,6 +1044,18 @@ var Component = /*#__PURE__*/function () {
     key: "onUnmount",
     value: function onUnmount(cb) {
       this.unmountCallback = cb;
+      return this;
+    }
+  }, {
+    key: "onKeydown",
+    value: function onKeydown(cb) {
+      this.element.onkeydown = cb;
+      return this;
+    }
+  }, {
+    key: "placeholder",
+    value: function placeholder(text) {
+      this.element.setAttribute("placeholder", text);
       return this;
     }
   }], [{
@@ -7261,6 +7810,20 @@ exports.ChatConnection = void 0;
 
 var _ircMessageTs = require("irc-message-ts");
 
+var _chat = require("~/controllers/chat");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -7364,6 +7927,59 @@ var ChatConnection = /*#__PURE__*/function () {
       if (!message) {
         return;
       }
+
+      switch (message.command) {
+        case "PRIVMSG":
+          {
+            this.handleMessage(message);
+            break;
+          }
+
+        case "CLEARCHAT":
+          {// todo handle clearchats
+          }
+      }
+    }
+  }, {
+    key: "handleMessage",
+    value: function handleMessage(message) {
+      var _message$tags, _message$param, _split;
+
+      _chat.GlobalChatController.publish(_chat.ChatEvents.Message, {
+        id: ((_message$tags = message.tags) === null || _message$tags === void 0 ? void 0 : _message$tags.id) || "",
+        content: message.trailing,
+        badges: this.parseBadges(message.tags.badges || ""),
+        channel: {
+          twitchId: message.tags["room-id"] || "",
+          login: ((_message$param = message.param) === null || _message$param === void 0 ? void 0 : _message$param.substring(1)) || ""
+        },
+        user: {
+          id: message.tags["user-id"] || "",
+          login: ((_split = (message.prefix || "").split("!")) === null || _split === void 0 ? void 0 : _split[0]) || "",
+          displayName: message.tags["display-name"] || "",
+          color: message.tags.color || "",
+          moderator: !!message.tags.mod
+        }
+      });
+    }
+  }, {
+    key: "parseBadges",
+    value: function parseBadges(badgesStr) {
+      var spl = badgesStr.split(",");
+      var resp = [];
+
+      for (var i = 0; i < spl.length; ++i) {
+        var _spl$i$split = spl[i].split("/"),
+            _spl$i$split2 = _slicedToArray(_spl$i$split, 2),
+            name = _spl$i$split2[0],
+            version = _spl$i$split2[1];
+
+        if (name && version) {
+          resp.push([name, version]);
+        }
+      }
+
+      return resp;
     }
   }]);
 
@@ -7371,7 +7987,258 @@ var ChatConnection = /*#__PURE__*/function () {
 }();
 
 exports.ChatConnection = ChatConnection;
-},{"irc-message-ts":"../node_modules/irc-message-ts/dist/index.js"}],"components/chat/chat.ts":[function(require,module,exports) {
+},{"irc-message-ts":"../node_modules/irc-message-ts/dist/index.js","~/controllers/chat":"controllers/chat.ts"}],"components/chat-info/info.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "info": "_info_12cc1",
+  "title": "_title_12cc1"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat-info/info.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateInfo = CreateInfo;
+
+var _component = require("~/core/component");
+
+var _infoModule = _interopRequireDefault(require("./info.module.scss"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateInfo(channel) {
+  return _component.Component.create("div").setClassName(_infoModule.default.info).addChild(_component.Component.create("span").setClassName(_infoModule.default.title).setText(channel.login));
+}
+},{"~/core/component":"core/component.ts","./info.module.scss":"components/chat-info/info.module.scss"}],"components/chat/chat.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "chat": "_chat_cd9f9"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat/input.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "container": "_container_8b2a3",
+  "field": "_field_8b2a3"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat/input.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatInput = CreateChatInput;
+
+var _connectionManager = require("~/controllers/connection-manager");
+
+var _component = require("~/core/component");
+
+var _inputModule = _interopRequireDefault(require("./input.module.scss"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateChatInput(channel) {
+  var t = _component.Component.create("textarea").placeholder("Send a chat message...").setClassName(_inputModule.default.field);
+
+  t.onKeydown(function (event) {
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    var content = t.ref().value;
+    t.ref().value = "";
+
+    _connectionManager.ConnectionManagerController.publish(_connectionManager.ConnectionManagerEvents.Send, {
+      channel: channel,
+      content: content
+    });
+
+    return false;
+  });
+
+  var c = _component.Component.create("div").setClassName(_inputModule.default.container).addChild(t);
+
+  return c;
+}
+},{"~/controllers/connection-manager":"controllers/connection-manager.ts","~/core/component":"core/component.ts","./input.module.scss":"components/chat/input.module.scss"}],"components/chat-line/chat-badge.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "badge": "_badge_3d496"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat-line/chat-badge.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatBadge = CreateChatBadge;
+exports.CreateChatBadges = CreateChatBadges;
+
+var _badges = require("~/controllers/badges");
+
+var _component = require("~/core/component");
+
+var _chatBadgeModule = _interopRequireDefault(require("./chat-badge.module.scss"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateChatBadge(badge) {
+  return _component.Component.create("img").src(badge.image_url_1x).setClassName(_chatBadgeModule.default.badge);
+}
+
+function CreateChatBadges(channelId, badgeSets) {
+  var badges = _badges.BadgeController.getBadges(channelId, badgeSets);
+
+  var c = _component.Component.create("span");
+
+  for (var i = 0; i < badges.length; ++i) {
+    c.addChild(CreateChatBadge(badges[i]));
+  }
+
+  return c;
+}
+},{"~/controllers/badges":"controllers/badges.ts","~/core/component":"core/component.ts","./chat-badge.module.scss":"components/chat-line/chat-badge.module.scss"}],"components/chat-line/chat-line.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "line": "_line_cc583"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat-line/content.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatContent = CreateChatContent;
+
+var _component = require("~/core/component");
+
+function CreateChatContent(message) {
+  return _component.Component.create("span").setText(message.content);
+}
+},{"~/core/component":"core/component.ts"}],"components/chat-line/user.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "name": "_name_5c675"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat-line/user.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatUser = CreateChatUser;
+
+var _component = require("~/core/component");
+
+var _userModule = _interopRequireDefault(require("./user.module.scss"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var createDisplayName = function createDisplayName(user) {
+  var lowerDisplayName = user.displayName.toLowerCase();
+
+  if (lowerDisplayName === user.login) {
+    return user.displayName;
+  }
+
+  return "".concat(user.displayName, " (").concat(user.login, ")");
+};
+
+function CreateChatUser(user) {
+  return _component.Component.create("span").setClassName(_userModule.default.name).setColor(user.color || "#aaa").data("trigger", "user-card").data("userId", user.id).data("userLogin", user.login).data("userDisplayName", user.displayName).setText(createDisplayName(user) + ": ");
+}
+},{"~/core/component":"core/component.ts","./user.module.scss":"components/chat-line/user.module.scss"}],"components/chat-line/chat-line.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatline = CreateChatline;
+
+var _component = require("~/core/component");
+
+var _chatBadge = require("./chat-badge");
+
+var _chatLineModule = _interopRequireDefault(require("./chat-line.module.scss"));
+
+var _content = require("./content");
+
+var _user = require("./user");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateChatline(message) {
+  return _component.Component.create("div").setClassName(_chatLineModule.default.line).addChild((0, _chatBadge.CreateChatBadges)(message.channel.twitchId, message.badges)).addChild((0, _user.CreateChatUser)(message.user)).addChild((0, _content.CreateChatContent)(message));
+}
+},{"~/core/component":"core/component.ts","./chat-badge":"components/chat-line/chat-badge.ts","./chat-line.module.scss":"components/chat-line/chat-line.module.scss","./content":"components/chat-line/content.ts","./user":"components/chat-line/user.ts"}],"components/chat/messages.module.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+module.exports = {
+  "container": "_container_c6e79"
+};
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/chat/messages.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CreateChatMessages = CreateChatMessages;
+
+var _chat = require("~/controllers/chat");
+
+var _component = require("~/core/component");
+
+var _chatLine = require("../chat-line/chat-line");
+
+var _messagesModule = _interopRequireDefault(require("./messages.module.scss"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var MAX_CHAT_SCROLLBACK = 10;
+
+function CreateChatMessages(controller) {
+  var c = _component.Component.create("div").setClassName(_messagesModule.default.container);
+
+  var purgeBacklog = function purgeBacklog() {
+    while (c.getChildren().length > MAX_CHAT_SCROLLBACK) {
+      c.removeChild(0);
+    }
+  };
+
+  var unsubscribeMessages = controller.subscribe(_chat.ChatEvents.Message, function (message) {
+    c.addChild((0, _chatLine.CreateChatline)(message));
+    purgeBacklog();
+  });
+  var unsubscribeNotices = controller.subscribe(_chat.ChatEvents.Notice, function () {
+    console.log("notice");
+  });
+  c.onUnmount(function () {
+    unsubscribeMessages();
+    unsubscribeNotices();
+  });
+  return c;
+}
+},{"~/controllers/chat":"controllers/chat.ts","~/core/component":"core/component.ts","../chat-line/chat-line":"components/chat-line/chat-line.ts","./messages.module.scss":"components/chat/messages.module.scss"}],"components/chat/chat.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7379,18 +8246,32 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CreateChat = CreateChat;
 
+var _badges = require("~/controllers/badges");
+
 var _connectionManager = require("~/controllers/connection-manager");
 
 var _component = require("~/core/component");
 
-function CreateChat(channel) {
-  return _component.Component.create("div").onMount(function () {
+var _info = require("../chat-info/info");
+
+var _chatModule = _interopRequireDefault(require("./chat.module.scss"));
+
+var _input = require("./input");
+
+var _messages = require("./messages");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateChat(channel, controller) {
+  return _component.Component.create("div").setClassName(_chatModule.default.chat).onMount(function () {
+    _badges.BadgeController.loadUser(channel.twitchId);
+
     _connectionManager.ConnectionManagerController.publish(_connectionManager.ConnectionManagerEvents.Join, channel);
   }).onUnmount(function () {
     _connectionManager.ConnectionManagerController.publish(_connectionManager.ConnectionManagerEvents.Part, channel);
-  });
+  }).addChild((0, _info.CreateInfo)(channel)).addChild((0, _messages.CreateChatMessages)(controller)).addChild((0, _input.CreateChatInput)(channel));
 }
-},{"~/controllers/connection-manager":"controllers/connection-manager.ts","~/core/component":"core/component.ts"}],"components/layout/styles.module.scss":[function(require,module,exports) {
+},{"~/controllers/badges":"controllers/badges.ts","~/controllers/connection-manager":"controllers/connection-manager.ts","~/core/component":"core/component.ts","../chat-info/info":"components/chat-info/info.ts","./chat.module.scss":"components/chat/chat.module.scss","./input":"components/chat/input.ts","./messages":"components/chat/messages.ts"}],"components/layout/styles.module.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -7406,6 +8287,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CreateLayout = CreateLayout;
 
+var _badges = require("~/controllers/badges");
+
+var _chat = require("~/controllers/chat");
+
 var _connectionManager = require("~/controllers/connection-manager");
 
 var _component = require("~/core/component");
@@ -7414,370 +8299,74 @@ var _storage = require("~/core/storage");
 
 var _chatConnection = require("~/utils/chat-connection");
 
-var _chat = require("../chat/chat");
+var _chat2 = require("../chat/chat");
 
 var _stylesModule = _interopRequireDefault(require("./styles.module.scss"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var channelsKey = "modclient/channels";
+var newlineRx = /\n/g;
 
 function CreateLayout(auth) {
   var channels = _storage.CoreStorage.get(channelsKey, []);
 
   var readConnection = new _chatConnection.ChatConnection(auth.login, auth.token);
   var writeConnection = new _chatConnection.ChatConnection(auth.login, auth.token);
+  var emitters = new Map();
 
-  _connectionManager.ConnectionManagerController.subscribe(_connectionManager.ConnectionManagerEvents.Join, function (channel) {
+  var unsubscribeJoin = _connectionManager.ConnectionManagerController.subscribe(_connectionManager.ConnectionManagerEvents.Join, function (channel) {
     readConnection.join(channel.login);
   });
 
-  _connectionManager.ConnectionManagerController.subscribe(_connectionManager.ConnectionManagerEvents.Part, function (channel) {
-    readConnection.part(channel.login);
+  var unsubscribePart = _connectionManager.ConnectionManagerController.subscribe(_connectionManager.ConnectionManagerEvents.Part, function (channel) {
+    readConnection.part(channel.login); // cleanup old emitters
+
+    emitters.delete(channel.twitchId);
   });
+
+  var unsubscribeMessages = _chat.GlobalChatController.subscribe(_chat.ChatEvents.Message, function (message) {
+    var emitter = emitters.get(message.channel.twitchId);
+
+    if (emitter) {
+      // only the child channel should get the event past the global controller
+      emitter.publish(_chat.ChatEvents.Message, message);
+    }
+  });
+
+  var unsubscribeSend = _connectionManager.ConnectionManagerController.subscribe(_connectionManager.ConnectionManagerEvents.Send, function (event) {
+    writeConnection.send("PRIVMSG #".concat(event.channel.login, " :").concat(event.content.replace(newlineRx, "")));
+  });
+
+  _badges.BadgeController.loadGlobal();
 
   return _component.Component.create("div").setClassName(_stylesModule.default.container).onMount(function () {
     readConnection.connect();
     writeConnection.connect();
-    console.log(channels);
 
     for (var i = 0; i < channels.length; ++i) {
-      this.addChild((0, _chat.CreateChat)(channels[i]));
+      var channel = channels[i];
+      var emitter = new _chat.ChatController();
+      console.log(channel);
+
+      if (!emitters.has(channel.twitchId)) {
+        emitters.delete(channel.twitchId); // discard old emitter
+
+        emitters.set(channel.twitchId, emitter);
+      }
+
+      this.addChild((0, _chat2.CreateChat)(channel, emitter));
     }
   }).onUnmount(function () {
     readConnection.disconnect();
     writeConnection.disconnect();
+    unsubscribeJoin();
+    unsubscribePart();
+    unsubscribeMessages();
+    unsubscribeSend();
   });
 }
-},{"~/controllers/connection-manager":"controllers/connection-manager.ts","~/core/component":"core/component.ts","~/core/storage":"core/storage.ts","~/utils/chat-connection":"utils/chat-connection.ts","../chat/chat":"components/chat/chat.ts","./styles.module.scss":"components/layout/styles.module.scss"}],"constants.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.TWITCH_AUTHORIZE_URL = exports.TWITCH_SCOPES = exports.TWITCH_REDIRECT_URL = exports.TWITCH_CLIENT_ID = void 0;
-var TWITCH_CLIENT_ID = "292iqn01thyi8k3xru68svjbu4druw";
-exports.TWITCH_CLIENT_ID = TWITCH_CLIENT_ID;
-var TWITCH_REDIRECT_URL = "development" === "development" ? "http://localhost:1234" : "https://modclient.aidenwallis.co.uk";
-exports.TWITCH_REDIRECT_URL = TWITCH_REDIRECT_URL;
-var TWITCH_SCOPES = ["channel:moderate", "chat:edit", "chat:read"].sort();
-exports.TWITCH_SCOPES = TWITCH_SCOPES;
-var TWITCH_AUTHORIZE_URL = "https://id.twitch.tv/oauth2/authorize?" + ("client_id=" + TWITCH_CLIENT_ID + "&redirect_uri=" + encodeURIComponent(TWITCH_REDIRECT_URL) + "&response_type=token" + "&scope=" + encodeURIComponent(TWITCH_SCOPES.join(" ")));
-exports.TWITCH_AUTHORIZE_URL = TWITCH_AUTHORIZE_URL;
-},{}],"utils/request-error.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.RequestError = void 0;
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
-
-function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var RequestError = /*#__PURE__*/function (_Error) {
-  _inherits(RequestError, _Error);
-
-  var _super = _createSuper(RequestError);
-
-  function RequestError(message, status) {
-    var _this;
-
-    _classCallCheck(this, RequestError);
-
-    _this = _super.call(this, message);
-    _this.statusCode = status;
-    return _this;
-  }
-
-  return RequestError;
-}( /*#__PURE__*/_wrapNativeSuper(Error));
-
-exports.RequestError = RequestError;
-},{}],"utils/api-client.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ApiClient = exports.ApiClientMethod = void 0;
-
-var _requestError = require("./request-error");
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var ApiClientMethod;
-exports.ApiClientMethod = ApiClientMethod;
-
-(function (ApiClientMethod) {
-  ApiClientMethod["GET"] = "GET";
-  ApiClientMethod["POST"] = "POST";
-  ApiClientMethod["PATCH"] = "PATCH";
-  ApiClientMethod["DELETE"] = "DELETE";
-  ApiClientMethod["PUT"] = "PUT";
-})(ApiClientMethod || (exports.ApiClientMethod = ApiClientMethod = {}));
-
-var UNKNOWN_ERR = "An unknown error occurred.";
-var UNKNOWN_ERR_STATUS = 500;
-
-var ApiClient = /*#__PURE__*/function () {
-  function ApiClient() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, ApiClient);
-
-    this.baseUrl = options.baseUrl || "";
-    this.headers = options.headers || {};
-  }
-
-  _createClass(ApiClient, [{
-    key: "request",
-    value: function request(config) {
-      var _baseURL$headers$conf = _objectSpread(_objectSpread({}, {
-        baseURL: this.baseUrl,
-        headers: this.headers
-      }), config),
-          baseURL = _baseURL$headers$conf.baseURL,
-          query = _baseURL$headers$conf.query,
-          url = _baseURL$headers$conf.url,
-          method = _baseURL$headers$conf.method,
-          body = _baseURL$headers$conf.body,
-          headers = _baseURL$headers$conf.headers;
-
-      return fetch(this.parseUrl(baseURL + url, query), {
-        method: method,
-        body: body,
-        headers: _objectSpread({
-          Accept: "application/json"
-        }, headers)
-      }).then(function (response) {
-        return response.json().then(function (json) {
-          return {
-            data: json,
-            status: response.status,
-            statusText: response.statusText,
-            headers: response.headers
-          };
-        });
-      });
-    }
-  }, {
-    key: "get",
-    value: function get(url) {
-      var qs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return fetch(this.baseUrl + this.parseUrl(url, qs), {
-        headers: this.parseHeaders(headers)
-      }).then(this.handleResponse).catch(this.handleError);
-    }
-  }, {
-    key: "delete",
-    value: function _delete(url) {
-      var qs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return fetch(this.parseUrl(url, qs), {
-        headers: this.parseHeaders(headers),
-        method: "DELETE"
-      }).then(this.handleResponse).catch(this.handleError);
-    }
-  }, {
-    key: "post",
-    value: function post(url, body) {
-      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return fetch(this.baseUrl + this.parseUrl(url, qs), {
-        headers: this.parseHeaders(headersObj),
-        body: body ? JSON.stringify(body) : null,
-        method: "POST"
-      }).then(this.handleResponse).catch(this.handleError);
-    }
-  }, {
-    key: "put",
-    value: function put(url, body) {
-      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return fetch(this.baseUrl + this.parseUrl(url, qs), {
-        headers: this.parseHeaders(headersObj),
-        body: body ? JSON.stringify(body) : null,
-        method: "PUT"
-      }).then(this.handleResponse).catch(this.handleError);
-    }
-  }, {
-    key: "patch",
-    value: function patch(url, body) {
-      var headersObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var qs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return fetch(this.baseUrl + this.parseUrl(url, qs), {
-        headers: this.parseHeaders(headersObj),
-        body: body ? JSON.stringify(body) : null,
-        method: "PATCH"
-      }).then(this.handleResponse).catch(this.handleError);
-    }
-  }, {
-    key: "handleResponse",
-    value: function handleResponse(response) {
-      return response.json().then(function (json) {
-        return {
-          body: json,
-          status: response.status,
-          statusText: response.statusText,
-          headers: response.headers
-        };
-      });
-    }
-  }, {
-    key: "handleError",
-    value: function handleError(err) {
-      return Promise.reject(new _requestError.RequestError(err.message ? err.message.toString() : UNKNOWN_ERR, err.statusCode || UNKNOWN_ERR_STATUS));
-    }
-  }, {
-    key: "parseUrl",
-    value: function parseUrl(endpoint, qs) {
-      var url = endpoint;
-
-      if (qs) {
-        var final = Object.keys(qs).map(function (q) {
-          var encodedKey = encodeURIComponent(q);
-          var value = qs[q];
-          if (!value) return "";
-
-          if (Array.isArray(value)) {
-            return value.map(function (nestedValue) {
-              return "".concat(encodedKey, "=").concat(encodeURIComponent(nestedValue));
-            }).join("&");
-          }
-
-          return "".concat(encodedKey, "=").concat(encodeURIComponent(value));
-        }).filter(function (i) {
-          return i;
-        }).join("&");
-
-        if (final.length) {
-          url += endpoint.includes("?") ? "&" : "?";
-        }
-
-        url += final;
-      }
-
-      return url;
-    }
-  }, {
-    key: "parseHeaders",
-    value: function parseHeaders(headers) {
-      var h = new Headers();
-
-      for (var _i = 0, _Object$keys = Object.keys(this.headers); _i < _Object$keys.length; _i++) {
-        var header = _Object$keys[_i];
-        h.append(header, this.headers[header]);
-      }
-
-      h.append("Accept", "application/json");
-
-      for (var _i2 = 0, _Object$keys2 = Object.keys(headers); _i2 < _Object$keys2.length; _i2++) {
-        var _header = _Object$keys2[_i2];
-        h.append(_header, headers[_header]);
-      }
-
-      return h;
-    }
-  }]);
-
-  return ApiClient;
-}();
-
-exports.ApiClient = ApiClient;
-},{"./request-error":"utils/request-error.ts"}],"utils/twitch-request.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.onLogout = onLogout;
-exports.setTwitchApiToken = setTwitchApiToken;
-exports.twitchApiRequest = twitchApiRequest;
-exports.twitchApiClient = void 0;
-
-var _constants = require("~/constants");
-
-var _apiClient = require("./api-client");
-
-var _requestError = require("./request-error");
-
-var logoutCallback = null;
-var twitchApiClient = new _apiClient.ApiClient({
-  headers: {
-    Accept: "application/json",
-    "Client-ID": _constants.TWITCH_CLIENT_ID
-  }
-});
-exports.twitchApiClient = twitchApiClient;
-
-function onLogout(cb) {
-  logoutCallback = cb;
-}
-
-function setTwitchApiToken(token) {
-  if (token) {
-    twitchApiClient.headers["Authorization"] = "Bearer ".concat(token);
-  } else {
-    delete twitchApiClient.headers["Authorization"];
-  }
-}
-
-function twitchApiRequest(options) {
-  options.onLoadStart && options.onLoadStart();
-  return twitchApiClient.request(options).then(function (response) {
-    options.onLoadEnd && options.onLoadEnd();
-
-    if (response.status !== 200) {
-      if (response.status === 401) {
-        var _logoutCallback;
-
-        (_logoutCallback = logoutCallback) === null || _logoutCallback === void 0 ? void 0 : _logoutCallback();
-      } else {
-        throw new Error("Non 200 http status code returned: ".concat(response.status));
-      }
-    } else {
-      return options.onSuccess && options.onSuccess(response.data);
-    }
-  }).catch(function (error) {
-    options.onLoadEnd && options.onLoadEnd();
-    console.log(error);
-    options.onError && options.onError(new _requestError.RequestError(error.toString(), 500));
-  });
-}
-},{"~/constants":"constants.ts","./api-client":"utils/api-client.ts","./request-error":"utils/request-error.ts"}],"controllers/auth.ts":[function(require,module,exports) {
+},{"~/controllers/badges":"controllers/badges.ts","~/controllers/chat":"controllers/chat.ts","~/controllers/connection-manager":"controllers/connection-manager.ts","~/core/component":"core/component.ts","~/core/storage":"core/storage.ts","~/utils/chat-connection":"utils/chat-connection.ts","../chat/chat":"components/chat/chat.ts","./styles.module.scss":"components/layout/styles.module.scss"}],"controllers/auth.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8337,7 +8926,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56852" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53690" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

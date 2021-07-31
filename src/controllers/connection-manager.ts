@@ -1,10 +1,12 @@
 import { Emitter } from "~/core/emitter";
+import { Channel } from "~/models/channel";
 
 export enum ConnectionManagerEvents {
   Join,
   Part,
   Connected,
   Disconnected,
+  Send,
 }
 
 export interface ConnectionPayload {
@@ -12,7 +14,12 @@ export interface ConnectionPayload {
   twitchId: string;
 }
 
-type EventSchemas = ConnectionPayload;
+export interface SendPayload {
+  channel: Channel;
+  content: string;
+}
+
+type EventSchemas = ConnectionPayload | SendPayload;
 
 class ConnectionManagerControllerImpl extends Emitter<
   ConnectionManagerEvents,

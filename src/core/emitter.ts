@@ -1,13 +1,8 @@
+import { raf } from "~/utils/raf";
+
 export type Subscriber = () => void;
 type GlobalEventHandler<T, P> = (t: T, payload: P) => void;
 type EventHandler<T> = (data: T) => void;
-
-const raf =
-  window.requestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  function (d) {
-    setTimeout(d, 1);
-  };
 
 // Emitter is a class which allows you to build a basic abstraction which can emit an event type
 // to a group of subscribers about a range of topics, it will not block the event loop, and defers

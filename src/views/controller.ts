@@ -6,7 +6,6 @@ import {
   UnauthorizedSchema,
 } from "~/controllers/auth";
 import { Component } from "~/core/component";
-import { ChatConnection } from "~/utils/chat-connection";
 import { AuthView } from "./auth/auth";
 import styles from "./controller.module.scss";
 import { LoadingView } from "./loading/loading";

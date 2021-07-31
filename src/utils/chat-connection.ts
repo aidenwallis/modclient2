@@ -1,4 +1,5 @@
-import { parse } from "irc-message-ts";
+import { IRCMessage, parse } from "irc-message-ts";
+import { ChatEvents, GlobalChatController } from "~/controllers/chat";
 
 const newlineRx = /[\r\n]+/g;
 
@@ -67,5 +68,49 @@ export class ChatConnection {
     if (!message) {
       return;
     }
+
+    switch (message.command) {
+      case "PRIVMSG": {
+        this.handleMessage(message);
+        break;
+      }
+
+      case "CLEARCHAT": {
+        // todo handle clearchats
+      }
+    }
+  }
+
+  private handleMessage(message: IRCMessage) {
+    GlobalChatController.publish(ChatEvents.Message, {
+      id: message.tags?.id || "",
+      content: message.trailing,
+      badges: this.parseBadges(message.tags.badges || ""),
+      channel: {
+        twitchId: message.tags["room-id"] || "",
+        login: message.param?.substring(1) || "",
+      },
+      user: {
+        id: message.tags["user-id"] || "",
+        login: (message.prefix || "").split("!")?.[0] || "",
+        displayName: message.tags["display-name"] || "",
+        color: message.tags.color || "",
+        moderator: !!message.tags.mod,
+      },
+    });
+  }
+
+  private parseBadges(badgesStr: string): [string, string][] {
+    const spl = badgesStr.split(",");
+    const resp: [string, string][] = [];
+
+    for (let i = 0; i < spl.length; ++i) {
+      const [name, version] = spl[i].split("/");
+      if (name && version) {
+        resp.push([name, version]);
+      }
+    }
+
+    return resp;
   }
 }

@@ -11,4 +11,8 @@
 .dark {
   --color-background-base: #1b1d20;
   --color-background-alt: #{lighten(#1b1d20, 10%)};
+  --color-background-alt2: #{lighten(#1b1d20, 5%)};
+  --chat-line-color: #dadada;
+  
+  --color-text-alt: #868686;
 }
