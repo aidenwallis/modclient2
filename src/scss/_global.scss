@@ -1,0 +1,25 @@
+@import "./helpers";
+@import "./reset";
+
+:root {
+  --color-primary: #3e8eed;
+  --color-brand-twitch: #9146FF;
+  --color-auth-button: var(--color-brand-twitch);
+
+  --spacing-05: #{spacing(0.5)};
+  --spacing-10: #{spacing(1)};
+  --spacing-20: #{spacing(2)};
+  --spacing-30: #{spacing(3)};
+  --spacing-40: #{spacing(4)};
+  --spacing-50: #{spacing(5)};
+  --spacing-60: #{spacing(6)};
+  --spacing-70: #{spacing(7)};
+  --spacing-80: #{spacing(8)};
+
+  --border-radius: 4px;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 62.5%;
+}
